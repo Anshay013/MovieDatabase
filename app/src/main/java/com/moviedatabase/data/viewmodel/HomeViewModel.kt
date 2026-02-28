@@ -3,6 +3,7 @@ package com.moviedatabase.data.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moviedatabase.data.repository.MovieRepository
+import com.moviedatabase.database.entity.MovieEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -18,12 +19,12 @@ class HomeViewModel @Inject constructor(
 
     val trending = repo.getTrending()
         .stateIn(viewModelScope,
-            SharingStarted.Lazily,
+            SharingStarted.WhileSubscribed(5000),
             emptyList())
 
     val nowPlaying = repo.getNowPlaying()
         .stateIn(viewModelScope,
-            SharingStarted.Lazily,
+            SharingStarted.WhileSubscribed(5000),
             emptyList())
 
     init {
@@ -35,8 +36,8 @@ class HomeViewModel @Inject constructor(
         repo.refreshNowPlaying()
     }
 
-    fun bookmark(id: Int, state: Boolean) =
+    fun toggleBookmark(movie: MovieEntity) =
         viewModelScope.launch {
-            repo.bookmark(id, state)
+            repo.bookmark(movie.id, !movie.bookmarked)
         }
 }

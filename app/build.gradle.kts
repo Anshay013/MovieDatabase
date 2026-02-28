@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.moviedatabase"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -37,7 +37,7 @@ android {
     }
 
     buildFeatures {
-        compose = true
+        viewBinding = true
     }
 }
 
@@ -50,12 +50,19 @@ dependencies {
     // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.constraintlayout)
+    implementation(libs.swiperefreshlayout)
 
     // Lifecycle & ViewModel
     implementation(libs.lifecycle.viewmodel)
 
     // Coroutines
     implementation(libs.coroutines.android)
+
+    // UI
+    implementation(libs.coil)
 
     // =========================
     // Networking
@@ -72,7 +79,7 @@ dependencies {
     // =========================
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
-    implementation(libs.appcompat)
+    implementation(libs.recyclerview)
     ksp(libs.room.compiler)
 
     // =========================
