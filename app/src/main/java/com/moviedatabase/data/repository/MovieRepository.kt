@@ -14,11 +14,13 @@ interface MovieRepository {
 
     fun searchLocal(query: String): Flow<List<MovieEntity>>
 
+    suspend fun getMovieById(id: Int): MovieEntity?
+
     suspend fun refreshTrending()
 
     suspend fun refreshNowPlaying()
 
-    suspend fun bookmark(id: Int, state: Boolean)
+    suspend fun toggleBookmark(movie: MovieEntity)
 
     suspend fun search(query: String): MovieResponseDto
 }

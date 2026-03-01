@@ -52,7 +52,7 @@ class SearchViewModel @Inject constructor(
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     private fun getRemoteSearchFlow(text: String) = flowOf(text)
-        .debounce(600) // if within 600 ms user doesn't type a thing we fetch latest data from network
+        .debounce(600)
         .flatMapLatest { queryText ->
             flow {
                 try {
@@ -82,7 +82,7 @@ class SearchViewModel @Inject constructor(
 
     fun toggleBookmark(movie: MovieEntity) {
         viewModelScope.launch {
-            repo.bookmark(movie.id, !movie.bookmarked)
+            repo.toggleBookmark(movie)
         }
     }
 }

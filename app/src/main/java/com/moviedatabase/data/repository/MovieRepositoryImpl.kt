@@ -1,8 +1,10 @@
 package com.moviedatabase.data.repository
 
 import com.moviedatabase.data.mapper.toEntity
+import com.moviedatabase.database.entity.MovieEntity
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
+import kotlinx.coroutines.flow.Flow
 
 @Singleton
 class MovieRepositoryImpl @Inject constructor(
@@ -17,6 +19,8 @@ class MovieRepositoryImpl @Inject constructor(
     override fun getBookmarks() = local.getBookmarks()
 
     override fun searchLocal(query: String) = local.searchLocal(query)
+
+    override suspend fun getMovieById(id: Int): MovieEntity? = local.getMovieById(id)
 
     override suspend fun refreshTrending() {
         val response = remote.getTrending()
@@ -34,8 +38,9 @@ class MovieRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun bookmark(id: Int, state: Boolean) {
-        local.bookmark(id, state)
+    override suspend fun toggleBookmark(movie: MovieEntity) {
+        val updated = movie.copy(bookmarked = !movie.bookmarked)
+        local.upsertMovie(updated)
     }
 
     override suspend fun search(query: String) =

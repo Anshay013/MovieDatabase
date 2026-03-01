@@ -27,6 +27,8 @@
         <activity
             android:name="com.moviedatabase.ui.SearchActivity"
             android:windowSoftInputMode="adjustResize" />
+        <activity android:name="com.moviedatabase.ui.MovieDetailActivity" />
+        <activity android:name="com.moviedatabase.ui.SavedMoviesActivity" />
     </application>
 
 </manifest>

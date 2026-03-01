@@ -38,6 +38,6 @@ class HomeViewModel @Inject constructor(
 
     fun toggleBookmark(movie: MovieEntity) =
         viewModelScope.launch {
-            repo.bookmark(movie.id, !movie.bookmarked)
+            repo.toggleBookmark(movie)
         }
 }

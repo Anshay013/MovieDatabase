@@ -19,6 +19,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Load API key from gradle.properties and ensure it's properly quoted for Java
+        val apiKey = project.findProperty("MOVIE_API_KEY")?.toString()?.replace("\"", "") ?: ""
+        buildConfigField("String", "MOVIE_API_KEY", "\"$apiKey\"")
     }
 
     buildTypes {
@@ -38,6 +42,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 

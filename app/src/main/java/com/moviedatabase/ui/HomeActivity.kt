@@ -2,6 +2,8 @@ package com.moviedatabase.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.moviedatabase.R
 import com.example.moviedatabase.databinding.ActivityHomeBinding
 import com.moviedatabase.data.viewmodel.HomeViewModel
 import com.moviedatabase.database.entity.MovieEntity
@@ -31,10 +34,26 @@ class HomeActivity : AppCompatActivity() {
 
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
 
         setupAdapters()
         observeMovies()
         setupInteractions()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.home_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_saved_movies -> {
+                startActivity(Intent(this, SavedMoviesActivity::class.java))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun setupAdapters() {
@@ -92,12 +111,12 @@ class HomeActivity : AppCompatActivity() {
             startActivity(Intent(this, SearchActivity::class.java))
         }
 
-        // manual refresh button, fetch everything from API and
+        // manual refresh button
         binding.btnRefresh.setOnClickListener {
             vm.refresh()
         }
 
-        // pull to refresh just like above
+        // pull to refresh
         binding.swipeRefresh.setOnRefreshListener {
             vm.refresh()
             binding.swipeRefresh.isRefreshing = false
@@ -105,6 +124,9 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun openDetails(movie: MovieEntity) {
-        Toast.makeText(this, movie.title, Toast.LENGTH_SHORT).show()
+        val intent = Intent(this, MovieDetailActivity::class.java).apply {
+            putExtra("MOVIE_ID", movie.id)
+        }
+        startActivity(intent)
     }
 }

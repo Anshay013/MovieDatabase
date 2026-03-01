@@ -16,6 +16,10 @@ class LocalMovieRepository @Inject constructor(
 
     fun searchLocal(query: String) = dao.searchLocal(query)
 
+    suspend fun getMovieById(id: Int) = dao.getMovieById(id)
+
+    suspend fun upsertMovie(movie: MovieEntity) = dao.upsertMovie(movie)
+
     suspend fun saveMovies(category: String, movies: List<MovieEntity>) {
         dao.upsertMovies(movies)
     }
