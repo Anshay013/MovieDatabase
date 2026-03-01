@@ -17,6 +17,9 @@ interface MovieDao {
     @Query("SELECT * FROM movies WHERE bookmarked = 1")
     fun getBookmarks(): Flow<List<MovieEntity>>
 
+    @Query("SELECT * FROM movies WHERE title LIKE '%' || :query || '%'")
+    fun searchLocal(query: String): Flow<List<MovieEntity>>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(movies: List<MovieEntity>): List<Long>
 

@@ -14,6 +14,8 @@ class LocalMovieRepository @Inject constructor(
 
     fun getBookmarks() = dao.getBookmarks()
 
+    fun searchLocal(query: String) = dao.searchLocal(query)
+
     suspend fun saveMovies(category: String, movies: List<MovieEntity>) {
         dao.upsertMovies(movies)
     }

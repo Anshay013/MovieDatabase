@@ -16,6 +16,8 @@ class MovieRepositoryImpl @Inject constructor(
 
     override fun getBookmarks() = local.getBookmarks()
 
+    override fun searchLocal(query: String) = local.searchLocal(query)
+
     override suspend fun refreshTrending() {
         val response = remote.getTrending()
         local.saveMovies(

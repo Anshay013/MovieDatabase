@@ -12,6 +12,8 @@ interface MovieRepository {
 
     fun getBookmarks(): Flow<List<MovieEntity>>
 
+    fun searchLocal(query: String): Flow<List<MovieEntity>>
+
     suspend fun refreshTrending()
 
     suspend fun refreshNowPlaying()

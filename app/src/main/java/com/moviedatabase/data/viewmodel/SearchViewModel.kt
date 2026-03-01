@@ -10,12 +10,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -23,27 +25,39 @@ class SearchViewModel @Inject constructor(
     private val repo: MovieRepository
 ) : ViewModel() {
 
-    private val query = MutableStateFlow("")
+    private val _query = MutableStateFlow("")
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-    val results = query
-        .debounce(500)
+    val results = _query
         .flatMapLatest { text ->
             if (text.isBlank()) {
                 flowOf(emptyList())
             } else {
+                // Combine local search (instant) with remote search (debounced)
                 combine(
-                    flow { 
-                        try {
-                            emit(repo.search(text).results)
-                        } catch (e: Exception) {
-                            emit(emptyList())
-                        }
-                    },
+                    repo.searchLocal(text),
+                    getRemoteSearchFlow(text),
                     repo.getBookmarks()
-                ) { dtoResults, bookmarks ->
+                ) { local, remote, bookmarks ->
                     val bookmarkedIds = bookmarks.map { it.id }.toSet()
-                    dtoResults.map { dto ->
+                    // Merge local and remote, then apply bookmark status
+                    (local + remote)
+                        .distinctBy { it.id }
+                        .map { it.copy(bookmarked = it.id in bookmarkedIds) }
+                }
+            }
+        }
+        .flowOn(Dispatchers.IO)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    private fun getRemoteSearchFlow(text: String) = flowOf(text)
+        .debounce(600) // if within 600 ms user doesn't type a thing we fetch latest data from network
+        .flatMapLatest { queryText ->
+            flow {
+                try {
+                    val dtoResults = repo.search(queryText).results
+                    val entities = dtoResults.map { dto ->
                         MovieEntity(
                             id = dto.id,
                             title = dto.title,
@@ -52,17 +66,18 @@ class SearchViewModel @Inject constructor(
                             backdrop = dto.backdrop_path,
                             rating = dto.vote_average,
                             releaseDate = dto.release_date,
-                            category = "search",
-                            bookmarked = dto.id in bookmarkedIds
+                            category = "search"
                         )
                     }
+                    emit(entities)
+                } catch (e: Exception) {
+                    emit(emptyList<MovieEntity>())
                 }
             }
         }
-        .flowOn(Dispatchers.IO)
 
     fun updateQuery(text: String) {
-        query.value = text
+        _query.value = text
     }
 
     fun toggleBookmark(movie: MovieEntity) {

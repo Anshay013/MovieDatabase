@@ -24,7 +24,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.moviedatabase.ui.SearchActivity" />
+        <activity
+            android:name="com.moviedatabase.ui.SearchActivity"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>
