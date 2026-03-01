@@ -1,5 +1,6 @@
 package com.moviedatabase.data.repository
 
+import android.util.Log
 import com.moviedatabase.data.mapper.toEntity
 import com.moviedatabase.database.entity.MovieEntity
 import jakarta.inject.Inject
@@ -23,19 +24,27 @@ class MovieRepositoryImpl @Inject constructor(
     override suspend fun getMovieById(id: Int): MovieEntity? = local.getMovieById(id)
 
     override suspend fun refreshTrending() {
-        val response = remote.getTrending()
-        local.saveMovies(
-            "trending",
-            response.results.map { it.toEntity("trending") }
-        )
+        try {
+            val response = remote.getTrending()
+            local.saveMovies(
+                "trending",
+                response.results.map { it.toEntity("trending") }
+            )
+        } catch (e: Exception) {
+            Log.e("MovieRepository", "Error refreshing trending movies", e)
+        }
     }
 
     override suspend fun refreshNowPlaying() {
-        val response = remote.getNowPlaying()
-        local.saveMovies(
-            "now",
-            response.results.map { it.toEntity("now") }
-        )
+        try {
+            val response = remote.getNowPlaying()
+            local.saveMovies(
+                "now",
+                response.results.map { it.toEntity("now") }
+            )
+        } catch (e: Exception) {
+            Log.e("MovieRepository", "Error refreshing now playing movies", e)
+        }
     }
 
     override suspend fun toggleBookmark(movie: MovieEntity) {

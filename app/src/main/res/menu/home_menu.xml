@@ -2,14 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_filter"
-        android:title="Options"
-        android:icon="@android:drawable/ic_menu_more"
-        app:showAsAction="always">
-        <menu>
-            <item
-                android:id="@+id/action_saved_movies"
-                android:title="Saved Movies" />
-        </menu>
-    </item>
+        android:id="@+id/action_saved_movies"
+        android:title="Saved Movies"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_about"
+        android:title="About App"
+        app:showAsAction="never" />
 </menu>

@@ -11,5 +11,21 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+
+        <!-- Fix for Action Mode flicker and overlay -->
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="actionModeBackground">?attr/colorSurface</item>
+    </style>
+
+    <style name="CustomActionModeStyle" parent="Widget.AppCompat.ActionMode">
+        <item name="background">?attr/colorSurface</item>
+        <item name="titleTextStyle">@style/CustomActionModeTitleTextStyle</item>
+    </style>
+
+    <style name="CustomActionModeTitleTextStyle" parent="TextAppearance.AppCompat.Widget.ActionMode.Title">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

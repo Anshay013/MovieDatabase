@@ -27,8 +27,19 @@
         <activity
             android:name="com.moviedatabase.ui.SearchActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name="com.moviedatabase.ui.MovieDetailActivity" />
+        <activity
+            android:name="com.moviedatabase.ui.MovieDetailActivity"
+            android:exported="true">
+            <intent-filter android:label="View Movie">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Dummy deeplink: moviedb://movie/{id} -->
+                <data android:scheme="moviedb" android:host="movie" />
+            </intent-filter>
+        </activity>
         <activity android:name="com.moviedatabase.ui.SavedMoviesActivity" />
+        <activity android:name="com.moviedatabase.ui.AboutActivity" />
     </application>
 
 </manifest>

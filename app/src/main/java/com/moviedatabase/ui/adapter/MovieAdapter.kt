@@ -1,5 +1,6 @@
 package com.moviedatabase.ui.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -12,8 +13,12 @@ import com.moviedatabase.database.entity.MovieEntity
 
 class MovieAdapter(
     private val onBookmarkClick: (MovieEntity) -> Unit,
-    private val onMovieClick: (MovieEntity) -> Unit
+    private val onMovieClick: (MovieEntity) -> Unit,
+    private val onLongClick: ((MovieEntity) -> Unit)? = null
 ) : ListAdapter<MovieEntity, MovieAdapter.MovieVH>(Diff()) {
+
+    private var selectedItems = emptySet<Int>()
+    private var isSelectionMode = false
 
     inner class MovieVH(val binding: ItemMovieBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -29,7 +34,6 @@ class MovieAdapter(
         val movie = getItem(position)
 
         holder.binding.title.text = movie.title
-
         holder.binding.poster.load(MovieConstants.IMAGE_BASE + movie.poster)
 
         holder.binding.bookmark.setImageResource(
@@ -44,8 +48,32 @@ class MovieAdapter(
         }
 
         holder.binding.root.setOnClickListener {
-            onMovieClick(movie)
+            if (isSelectionMode) {
+                onLongClick?.invoke(movie) // Use long click callback to toggle in activity/VM
+            } else {
+                onMovieClick(movie)
+            }
         }
+
+        holder.binding.root.setOnLongClickListener {
+            onLongClick?.invoke(movie)
+            true
+        }
+
+        // Highlight selected items
+        holder.binding.root.setBackgroundColor(
+            if (selectedItems.contains(movie.id)) Color.LTGRAY else Color.TRANSPARENT
+        )
+    }
+
+    fun updateSelection(ids: Set<Int>, selectionMode: Boolean) {
+        this.selectedItems = ids
+        this.isSelectionMode = selectionMode
+        notifyDataSetChanged()
+    }
+
+    fun getSelectedMovies(): List<MovieEntity> {
+        return currentList.filter { selectedItems.contains(it.id) }
     }
 
     class Diff : DiffUtil.ItemCallback<MovieEntity>() {

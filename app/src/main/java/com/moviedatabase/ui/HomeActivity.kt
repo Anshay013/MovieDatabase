@@ -35,6 +35,8 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+        // Disable the default title so it doesn't overlap with our custom TextView
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         setupAdapters()
         observeMovies()
@@ -50,6 +52,10 @@ class HomeActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_saved_movies -> {
                 startActivity(Intent(this, SavedMoviesActivity::class.java))
+                true
+            }
+            R.id.action_about -> {
+                startActivity(Intent(this, AboutActivity::class.java))
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -109,11 +115,6 @@ class HomeActivity : AppCompatActivity() {
         // Search navigation
         binding.searchBar.setOnClickListener {
             startActivity(Intent(this, SearchActivity::class.java))
-        }
-
-        // manual refresh button
-        binding.btnRefresh.setOnClickListener {
-            vm.refresh()
         }
 
         // pull to refresh
